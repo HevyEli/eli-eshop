@@ -1,0 +1,15 @@
+app:
+  productId:
+    validation: enabled
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eshop-db
+    username: user
+    password: pass
+jpa:
+  hibernate:
+    ddl-auto: update
+  properties:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
