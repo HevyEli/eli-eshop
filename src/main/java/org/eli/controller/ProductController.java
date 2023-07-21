@@ -78,7 +78,7 @@ public class ProductController {
     public ResponseEntity<ProductResponseMessage> deleteProductById(@PathVariable long id) {
         logger.info("deleteProductById received request to delete product: {}.", id);
         Optional<Product> existingProduct = productService.deleteProductById(id);
-        if (existingProduct == null) {
+        if (existingProduct.isEmpty()) {
             logger.info("No product with id {} found.", id);
             ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.NOT_FOUND, "Product " + id + " not found", "[]");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
