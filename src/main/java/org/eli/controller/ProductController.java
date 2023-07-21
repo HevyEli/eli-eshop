@@ -19,6 +19,7 @@ import org.eli.service.ProductService;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -76,7 +77,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ProductResponseMessage> deleteProductById(@PathVariable long id) {
         logger.info("deleteProductById received request to delete product: {}.", id);
-        Product deletedProduct = productService.deleteProductById(id);
+        Optional<Product> deletedProduct = productService.deleteProductById(id);
         if (deletedProduct == null) {
             logger.info("No product with id {} found.", id);
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product " + id + " not found.");

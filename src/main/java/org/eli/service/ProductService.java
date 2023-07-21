@@ -36,9 +36,13 @@ public class ProductService {
     }
 
 
-    public Product deleteProductById(long id) {
-        productRepository.deleteById(id);
-        return new Product();
+    public Optional<Product> deleteProductById(long id) {
+        Optional<Product> existingProduct = productRepository.findById(id);
+
+        if (existingProduct.isPresent()) {
+            productRepository.deleteById(id);
+        }
+        return existingProduct;
     }
 //    public  Product deleteProductById(long id) {
 //        Optional<Product> p = productRepository.findById(id);
