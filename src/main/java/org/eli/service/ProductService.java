@@ -28,7 +28,7 @@ public class ProductService {
     public boolean checkIfProductExists(long id) {
         Optional<Product> p = productRepository.findById(id);
         Product prod = p.isPresent() ? p.get() : null;
-        return p.isPresent() ? true : false;
+        return p.isPresent();
     }
 
     public List<Product> getAllProducts() {
@@ -36,7 +36,7 @@ public class ProductService {
     }
 
 
-    public  Product deleteProductById(long id) {
+    public Product deleteProductById(long id) {
         productRepository.deleteById(id);
         return new Product();
     }
