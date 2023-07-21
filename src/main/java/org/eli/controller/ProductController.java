@@ -77,15 +77,13 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ProductResponseMessage> deleteProductById(@PathVariable long id) {
         logger.info("deleteProductById received request to delete product: {}.", id);
-        Optional<Product> deletedProduct = productService.deleteProductById(id);
-        if (deletedProduct == null) {
+        Optional<Product> existingProduct = productService.deleteProductById(id);
+        if (existingProduct == null) {
             logger.info("No product with id {} found.", id);
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product " + id + " not found.");
             ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.NOT_FOUND, "Product " + id + " not found", "[]");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
         }
         logger.info("Product id {} has been deleted.", id);
-//        return ResponseEntity.status(HttpStatus.OK).body("Product " + id + " has been deleted.");
         ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, "Product " + id + " has been deleted", "[DLTD]");
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
 
