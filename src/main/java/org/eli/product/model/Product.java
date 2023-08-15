@@ -2,19 +2,21 @@ package org.eli.product.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.eli.order.entity.Order;
+import javax.persistence.*;
 
 @Entity
-@Table
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
     private long id;
     private String name;
     private double price;
     private String description;
     private int quantity;
 
-//    @ManyToMany(mappedBy ="products")
+    @ManyToMany(mappedBy ="products")
     @JsonIgnore
 
     public Product() {
