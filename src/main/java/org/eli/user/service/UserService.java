@@ -1,7 +1,7 @@
-package org.eli.service;
+package org.eli.user.service;
 
-import org.eli.entity.User;
-import org.eli.repository.UserRepository;
+import org.eli.user.entity.User;
+import org.eli.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

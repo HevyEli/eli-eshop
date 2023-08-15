@@ -1,11 +1,10 @@
-package org.eli.controller;
+package org.eli.product.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eli.configuration.ProductControllerProperties;
-import org.eli.dto.ProductResponseMessage;
-import org.eli.product.Product;
-import org.eli.repository.ProductJpaRepository;
+import org.eli.product.configuration.ProductControllerProperties;
+import org.eli.product.dto.ProductResponseMessage;
+import org.eli.product.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.eli.service.ProductService;
+import org.eli.product.service.ProductService;
 
 import java.util.Comparator;
 import java.util.List;

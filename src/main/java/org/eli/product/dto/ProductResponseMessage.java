@@ -1,4 +1,4 @@
-package org.eli.dto;
+package org.eli.product.dto;
 
 import org.springframework.http.HttpStatus;
 

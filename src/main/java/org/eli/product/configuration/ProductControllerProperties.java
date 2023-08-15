@@ -1,6 +1,5 @@
-package org.eli.configuration;
+package org.eli.product.configuration;
 
-import org.hibernate.annotations.Comment;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 

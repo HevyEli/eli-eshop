@@ -1,7 +1,7 @@
-package org.eli.controller;
+package org.eli.user.controller;
 
-import org.eli.entity.User;
-import org.eli.service.UserService;
+import org.eli.user.entity.User;
+import org.eli.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

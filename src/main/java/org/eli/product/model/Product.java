@@ -1,12 +1,10 @@
-package org.eli.product;
+package org.eli.product.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 @Entity
-
+@Table
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +14,13 @@ public class Product {
     private String description;
     private int quantity;
 
+//    @ManyToMany(mappedBy ="products")
+    @JsonIgnore
+
+    public Product() {
+
+    }
+
     public Product(long id, String name, double price, String description, int quantity) {
         this.id = id;
         this.name = name;
@@ -24,9 +29,6 @@ public class Product {
         this.quantity = quantity;
     }
 
-    public Product() {
-
-    }
 
     @Override
     public String toString() {

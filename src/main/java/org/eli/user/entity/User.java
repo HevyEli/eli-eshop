@@ -1,4 +1,4 @@
-package org.eli.entity;
+package org.eli.user.entity;
 
 import jakarta.persistence.*;
 
