@@ -42,5 +42,15 @@ public class UserController {
         User savedUser = userService.createUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
+    @PostMapping("/disable/{id}")
+    public ResponseEntity<String> disableUserById (@PathVariable long id) {
+        Optional<User> existingUser = userService.getUserById(id);
+        if (existingUser.isPresent()) {
+            userService.disableUserById(id);
+            return ResponseEntity.status(HttpStatus.OK).body("User " + id +" disabled");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User " + id + " not found");
+
+    }
 
 }

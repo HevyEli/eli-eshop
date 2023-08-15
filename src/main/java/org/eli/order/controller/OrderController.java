@@ -33,7 +33,7 @@ public class OrderController {
         return new ResponseEntity<>(newOrder, HttpStatus.OK);
     }
 
-    @PostMapping
+    @DeleteMapping
     public Order deleteOrderById (@PathVariable long id) {
         return orderService.deleteOrderById(id);
     }

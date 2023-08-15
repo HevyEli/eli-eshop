@@ -17,6 +17,21 @@ public class User {
 
     @Column(nullable = false)
     private String role;
+    @Column(nullable = false)
+    private String active;
+
+    public User() {
+
+    }
+
+    public String getActive() {
+        return active;
+    }
+
+    public void setActive(String active) {
+        this.active = active;
+    }
+
 
     public long getId() {
         return id;
@@ -54,7 +69,8 @@ public class User {
         return "User{" +
                 "id = " + id +
                 "username=" + username +
-                "password=" + password+
-                "role=" + role  + "}";
+                "password=" + password +
+                "role=" + role +
+                "active=" + active + "}";
     }
 }

@@ -31,6 +31,15 @@ public class UserService {
     public User createUser(User user) {
         String passwordHash = new BCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(passwordHash);
+        user.setActive("Y");
         return userJpaRepository.save(user);
+    }
+
+    public User disableUserById(long id) {
+        Optional<User> optUser = userJpaRepository.findById(id);
+        optUser.ifPresent(user -> {
+            user.setActive("N");
+        });
+        return null;
     }
 }
