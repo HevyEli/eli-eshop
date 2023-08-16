@@ -32,8 +32,9 @@ public class ProductController {
     private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService, ProductControllerProperties productControllerProperties) {
+    public ProductController(ProductService productService, ProductControllerProperties productControllerProperties, ProductControllerProperties productControllerProperties1) {
         this.productService = productService;
+        this.productControllerProperties = productControllerProperties1;
     }
 
     @GetMapping("/getAllProducts")
