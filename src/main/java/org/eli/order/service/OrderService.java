@@ -23,7 +23,7 @@ public class OrderService {
     }
 
     public Order getOrderById(long id) {
-        return orderJpaRepository.findById(id).orElseThrow(() -> new IllegalStateException(String.format("\"Could not find order")));
+        return orderJpaRepository.findById(id).orElseThrow(() -> new IllegalStateException("\"Could not find order"));
     }
     public Order createNewOrder(Order order) {
         return orderJpaRepository.save(order);
