@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 public class SecurityConfig {
     @Autowired
     public UserDetailsService userDetailsService;
@@ -36,7 +36,8 @@ public class SecurityConfig {
         return http
                 .authorizeRequests()
                 .requestMatchers("/api/orders/**").hasRole("ADMIN")
-                .requestMatchers("/api/products/**").hasAnyRole("ADMIN", "SUPERUSER")
+                //.requestMatchers("/api/products/**").hasAnyRole("ADMIN", "SUPERUSER")
+                .requestMatchers("/api/products/**").permitAll()
                 .requestMatchers("/api/users/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

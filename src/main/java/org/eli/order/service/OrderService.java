@@ -2,13 +2,9 @@ package org.eli.order.service;
 
 import org.eli.order.entity.Order;
 import org.eli.order.repository.OrderJpaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -30,7 +26,7 @@ public class OrderService {
     }
 
 
-    public Order deleteOrderById(long id) {
-        return orderJpaRepository.delete(id);
+    public void deleteOrderById(long id) {
+        orderJpaRepository.deleteById(id);
     }
 }
