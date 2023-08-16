@@ -22,7 +22,7 @@ public class UserService {
         return userJpaRepository.findAll();
     }
     public User getUserByUsername(String username) {
-        return userJpaRepository.findUserByUserName(username);
+        return userJpaRepository.findByUsername(username);
     }
     public Optional<User> getUserById(long id) {
         return userJpaRepository.findById(id);
@@ -31,15 +31,20 @@ public class UserService {
     public User createUser(User user) {
         String passwordHash = new BCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(passwordHash);
-        user.setActive("Y");
+        user.setActiveInd("Y");
         return userJpaRepository.save(user);
     }
 
     public User disableUserById(long id) {
         Optional<User> optUser = userJpaRepository.findById(id);
         optUser.ifPresent(user -> {
-            user.setActive("N");
+            user.setActiveInd("N");
         });
         return null;
     }
+
+    public boolean isUserActive (long id) {
+        Optional<User> user = userJpaRepository.findById(id);
+        return user.isPresent() && "Y".equals(user.get().getActiveInd());
+        }
 }
