@@ -32,7 +32,7 @@ public class ProductController {
     private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductControllerProperties productControllerProperties) {
         this.productService = productService;
     }
 
@@ -88,8 +88,7 @@ public class ProductController {
 
     }
 
-    @Autowired
-    private ProductControllerProperties productControllerProperties;
+    private final ProductControllerProperties productControllerProperties;
     @PostMapping
     public ResponseEntity<ProductResponseMessage> createProduct(@RequestBody Product product) throws JsonProcessingException {
         logger.info("createProduct received request to create product: " + product);
@@ -98,7 +97,7 @@ public class ProductController {
         if ("enabled".equals(productIdValidation)) {
             logger.info("productIdValidation is enabled");
             boolean checkIfExists = productService.checkIfProductExists(product.getId());
-            if (checkIfExists == true) {
+            if (checkIfExists) {
                 logger.info("Product {} already exists.", product.getId());
                 ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.CONFLICT, "Product " + product.getId() + " already exists", "[ERROR_EXIST]");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(responseMessage);
