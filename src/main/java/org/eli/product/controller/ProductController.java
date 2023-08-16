@@ -24,7 +24,7 @@ import java.util.Optional;
 @RestController
 @Configuration
 @PropertySource("classpath:application.yml")
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 
 public class ProductController {
     @Value("${app.productId.validation}")

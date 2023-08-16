@@ -9,7 +9,7 @@ import org.eli.order.entity.Order;
 import java.util.List;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/api/order")
 public class OrderController {
     private final OrderService orderService;
 

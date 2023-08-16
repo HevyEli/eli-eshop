@@ -3,7 +3,6 @@ package org.eli.product.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.eli.order.entity.Order;
-import javax.persistence.*;
 
 @Entity
 public class Product {
@@ -15,10 +14,6 @@ public class Product {
     private double price;
     private String description;
     private int quantity;
-
-    @ManyToMany(mappedBy ="products")
-    @JsonIgnore
-
     public Product() {
 
     }
