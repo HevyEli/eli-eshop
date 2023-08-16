@@ -18,18 +18,18 @@ public class User {
     @Column(nullable = false)
     private String role;
     @Column(nullable = false)
-    private String active;
+    private String activeInd;
 
     public User() {
 
     }
 
-    public String getActive() {
-        return active;
+    public String getActiveInd() {
+        return activeInd;
     }
 
-    public void setActive(String active) {
-        this.active = active;
+    public void setActiveInd(String active) {
+        this.activeInd = active;
     }
 
 
@@ -71,6 +71,6 @@ public class User {
                 "username=" + username +
                 "password=" + password +
                 "role=" + role +
-                "active=" + active + "}";
+                "active=" + activeInd + "}";
     }
 }
