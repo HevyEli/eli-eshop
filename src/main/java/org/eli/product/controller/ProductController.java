@@ -2,6 +2,8 @@ package org.eli.product.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eli.config.SecurityConfigProperties;
+import org.eli.exception.ProductNotFoundException;
 import org.eli.product.configuration.ProductControllerProperties;
 import org.eli.product.dto.ProductResponseMessage;
 import org.eli.product.model.Product;
@@ -30,68 +32,105 @@ public class ProductController {
     @Value("${app.productId.validation}")
     private String productIdValidation;
     private final ProductService productService;
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+    private final SecurityConfigProperties securityConfigProperties;
 
     @Autowired
-    public ProductController(ProductService productService, ProductControllerProperties productControllerProperties, ProductControllerProperties productControllerProperties1) {
+    public ProductController(ProductService productService, ProductControllerProperties productControllerProperties, SecurityConfigProperties securityConfigProperties) {
         this.productService = productService;
-        this.productControllerProperties = productControllerProperties1;
+        this.productControllerProperties = productControllerProperties;
+        this.securityConfigProperties = securityConfigProperties;
     }
 
     @GetMapping("/getAllProducts")
-    public ResponseEntity<ProductResponseMessage>  getAllProducts() throws JsonProcessingException {
+    public ResponseEntity<ProductResponseMessage> getAllProducts() throws JsonProcessingException {
+        if (securityConfigProperties.isSecurityDisabled()) {
+            logger.info("Endpoint /api/products/{} is NOT secured, it is public endpoint");
+        } else {
+            logger.info("Endpoint /api/products/{} is secured");
+        }
         logger.info("getAllProducts productService request");
-        List<Product> products = productService.getAllProducts();
-        ObjectMapper objectMapper = new ObjectMapper();
-        String productsJson = objectMapper.writeValueAsString(products);
-
-        if (products.isEmpty()) {
+        try {
+            List<Product> products = productService.getAllProducts();
+            ObjectMapper objectMapper = new ObjectMapper();
+            String productsJson = objectMapper.writeValueAsString(products);
+            logger.info("getAllProducts response: Returned list {} of products.", products.size());
+            products.sort(Comparator.comparing(Product::getId));
+            ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, products.size() + " product(s) returned", "{ \"product\": [ " + productsJson + " ] }");
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        } catch (ProductNotFoundException ex) {
             logger.info("getAllProducts response: There are no products available.");
             ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.NOT_FOUND, "There are no products", "[empty list!]");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
+        } catch (JsonProcessingException ex) {
+            logger.error("Error serializing product: {}", ex.getMessage());
+            ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Serialization error", "Failed to serialize product");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMessage);
         }
-        else {
-            logger.info("getAllProducts response: Returned list {} of products.", products.size());
-        }
-        products.sort(Comparator.comparing(Product::getId));
-        ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, products.size()  + " product(s) returned", "{ \"product\": [ " + productsJson + " ] }");
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseMessage> getProductById(@PathVariable long id) throws JsonProcessingException {
-        logger.info("getProductById received request for product: {}", id);
-        Product product = productService.getProductById(id);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String productJson = objectMapper.writeValueAsString(product);
-        if (product == null) {
-            logger.info("There is no product with id {}.", id);
-            ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.NOT_FOUND, "Product id "+ id + " not found", "Product not found" );
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
+    public ResponseEntity<ProductResponseMessage> getProductById(@PathVariable long id) {
+        if (securityConfigProperties.isSecurityDisabled()) {
+            logger.info("Endpoint /api/products/{} is NOT secured, it is public endpoint", id);
+        } else {
+            logger.info("Endpoint /api/products/{} is secured", id);
         }
-        logger.info("Product {} found.", id);
-        logger.info(String.valueOf(product));
-        ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, "Product id" + product, "{ \"product\": [ " + productJson + " ] }");
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        logger.info("getProductById received request for product: {}", id);
+
+        try {
+            Product product = productService.getProductById(id);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String productJson = objectMapper.writeValueAsString(product);
+
+            logger.info("Product {} found.", id);
+            logger.info(String.valueOf(product));
+            ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, "Product id " + id, "{ \"product\": [ " + productJson + " ] }");
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+
+        } catch (ProductNotFoundException ex) {
+            logger.info("There is no product with id {}.", id);
+            ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.NOT_FOUND, "Product id " + id + " not found", "Product not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
+
+        } catch (JsonProcessingException ex) {
+            logger.error("Error serializing product: {}", ex.getMessage());
+            ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Serialization error", "Failed to serialize product");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMessage);
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ProductResponseMessage> deleteProductById(@PathVariable long id) {
+        if (securityConfigProperties.isSecurityDisabled()) {
+            logger.info("Endpoint /api/products/{} is NOT secured, it is public endpoint", id);
+        } else {
+            logger.info("Endpoint /api/products/{} is secured", id);
+        }
         logger.info("deleteProductById received request to delete product: {}.", id);
-        Optional<Product> existingProduct = productService.deleteProductById(id);
-        if (existingProduct.isEmpty()) {
+        try {
+            logger.info("Product id {} has been deleted.", id);
+            ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, "Product " + id + " has been deleted", "[DLTD]");
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+
+        } catch (ProductNotFoundException ex) {
             logger.info("No product with id {} found.", id);
             ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.NOT_FOUND, "Product " + id + " not found", "[]");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
         }
-        logger.info("Product id {} has been deleted.", id);
-        ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, "Product " + id + " has been deleted", "[DLTD]");
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
-
     }
 
     private final ProductControllerProperties productControllerProperties;
+
     @PostMapping
     public ResponseEntity<ProductResponseMessage> createProduct(@RequestBody Product product) throws JsonProcessingException {
+        if (securityConfigProperties.isSecurityDisabled()) {
+            logger.info("Endpoint /api/products/{} is NOT secured, it is public endpoint", product);
+        } else {
+            logger.info("Endpoint /api/products/{} is secured", product);
+        }
         logger.info("createProduct received request to create product: " + product);
         ObjectMapper objectMapper = new ObjectMapper();
         String productJson = objectMapper.writeValueAsString(product);
@@ -102,18 +141,24 @@ public class ProductController {
                 logger.info("Product {} already exists.", product.getId());
                 ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.CONFLICT, "Product " + product.getId() + " already exists", "[ERROR_EXIST]");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(responseMessage);
-            } if  ("disabled".equals(productIdValidation)) {
+            }
+            if ("disabled".equals(productIdValidation)) {
                 logger.info("productIdValidation is disabled");
             }
         }
         productService.createProduct(product);
         logger.info("Product " + product + " has been created.");
         ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, "product: " + product.getId() + " has been created.", "{ \"product\": [ " + productJson + " ] }");
-        return  ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseMessage> editProductById(@PathVariable long id, @RequestBody Product newProduct)  {
+    public ResponseEntity<ProductResponseMessage> editProductById(@PathVariable long id, @RequestBody Product newProduct) {
+        if (securityConfigProperties.isSecurityDisabled()) {
+            logger.info("Endpoint /api/products/{} is NOT secured, it is public endpoint", id);
+        } else {
+            logger.info("Endpoint /api/products/{} is secured", id);
+        }
         logger.info("editProductById received request to edit product {}.", id);
 
         Product oldProduct = productService.getProductById(id);
@@ -127,7 +172,7 @@ public class ProductController {
                 "Old values Id: " + oldProduct.getId() + " name: " + oldProduct.getName() + "Price: " + oldProduct.getPrice() + " Description: " + oldProduct.getDescription() +
                 "new values id:{}." + " name: " + updatedProduct.getName() + " price: " + updatedProduct.getPrice() + " description: " + updatedProduct.getDescription() + "qty: " + updatedProduct.getQuantity(), id);
 
-        ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, "", "Product: "+"id: " + id + " has been updated with these attributes, "
+        ProductResponseMessage responseMessage = new ProductResponseMessage(HttpStatus.OK, "", "Product: " + "id: " + id + " has been updated with these attributes, "
                 + "name: " + updatedProduct.getName() + " price: " + updatedProduct.getPrice() + " quantity: "
                 + updatedProduct.getQuantity() + " descripriton: " + updatedProduct.getDescription() + ".");
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
@@ -135,6 +180,11 @@ public class ProductController {
 
     @PutMapping("/editQty/{id}")
     public ResponseEntity<ProductResponseMessage> editProductQtyById(@PathVariable long id, @RequestBody Product newQty) throws JsonProcessingException {
+        if (securityConfigProperties.isSecurityDisabled()) {
+            logger.info("Endpoint /api/products/{} is NOT secured, it is public endpoint", id);
+        } else {
+            logger.info("Endpoint /api/products/{} is secured", id);
+        }
         logger.info("editProductQtyById received request update Qty for product {}.", id);
         Product existingProduct = productService.getProductById(id);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -152,6 +202,4 @@ public class ProductController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 }

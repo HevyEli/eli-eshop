@@ -1,5 +1,6 @@
 package org.eli.product.service;
 
+import org.eli.exception.ProductNotFoundException;
 import org.eli.product.model.Product;
 import org.eli.product.repository.ProductJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +18,22 @@ public class ProductService {
     public ProductService(ProductJpaRepository productJpaRepository) {
         this.productJpaRepository = productJpaRepository;
     }
-    public void createProduct (Product product) {
+
+    public void createProduct(Product product) {
         productJpaRepository.save(product);
     }
 
-    public List<Product> getAllProducts () {
+    public List<Product> getAllProducts() {
         return productJpaRepository.findAll();
     }
 
-    public Product getProductById (long id) {
-        return productJpaRepository.findById(id).orElseThrow();
+    public Product getProductById(long id) {
+        return productJpaRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
- public Product editProductById(long id, String name, double price, String description, int quantity) {
+    public Product editProductById(long id, String name, double price, String description, int quantity) {
         Optional<Product> productOptional = productJpaRepository.findById(id);
-
         productOptional.ifPresent(product -> {
             product.setName(name);
             product.setPrice(price);
@@ -39,10 +41,10 @@ public class ProductService {
             product.setQuantity(quantity);
             productJpaRepository.save(product);
         });
-     return null;
- }
+        return null;
+    }
 
-    public Product editProductQtyById (long id, int quantity) {
+    public Product editProductQtyById(long id, int quantity) {
         Optional<Product> productOptional = productJpaRepository.findById(id);
         productOptional.ifPresent(product -> {
             product.setQuantity(quantity);
@@ -51,12 +53,15 @@ public class ProductService {
         return null;
     }
 
-    public Optional<Product> deleteProductById (long id) {
+    public Optional<Product> deleteProductById(long id) {
+        if (!productJpaRepository.existsById(id)) {
+            throw new ProductNotFoundException(id);
+        }
         productJpaRepository.deleteById(id);
         return null;
     }
 
-    public boolean checkIfProductExists (long id) {
+    public boolean checkIfProductExists(long id) {
         productJpaRepository.findById(id);
         return true;
     }
