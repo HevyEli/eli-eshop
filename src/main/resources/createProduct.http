@@ -1,0 +1,11 @@
+POST http://localhost:80/api/products
+Content-Type: application/json
+
+{
+    "id": 2,
+    "name": "Mobil2",
+    "description": "skvely novy mobil2",
+    "price": 14999.90
+}
+
+###
