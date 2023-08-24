@@ -42,23 +42,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-        if (!securityDisabled) {
-            logger.info("Web security is enabled");
-            return http
-                    .authorizeRequests()
-                    .requestMatchers("/api/orders/**").hasRole("ADMIN")
-                    .anyRequest().authenticated()
-                    .and()
-                    .httpBasic()
-                    .and()
-                    .build();
-        } else {
+//        if (!securityDisabled) {
+//            logger.info("Web security is enabled");
+//            return http
+//                    .authorizeRequests()
+//                    .requestMatchers("/api/orders/**").hasRole("ADMIN")
+//                    .anyRequest().authenticated()
+//                    .and()
+//                    .httpBasic()
+//                    .and()
+//                    .build();
+//        } else {
             logger.info("Web security is disabled");
             return http
                     .authorizeRequests()
                     .anyRequest().permitAll()
                     .and()
                     .build();
-        }
+//        }
     }
 }

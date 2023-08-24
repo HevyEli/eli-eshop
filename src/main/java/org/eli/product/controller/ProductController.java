@@ -124,7 +124,7 @@ public class ProductController {
 
     private final ProductControllerProperties productControllerProperties;
 
-    @PostMapping
+    @PostMapping("/createProd/")
     public ResponseEntity<ProductResponseMessage> createProduct(@RequestBody Product product) throws JsonProcessingException {
         if (securityConfigProperties.isSecurityDisabled()) {
             logger.info("Endpoint /api/products/{} is NOT secured, it is public endpoint", product);
